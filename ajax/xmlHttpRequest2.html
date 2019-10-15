@@ -14,14 +14,52 @@
             background: crimson;
             border-radius: 20px;
         }
+        .progresso{
+            text-align: center;
+            max-height: 10vh;
+        }
     </style>
 </head>
 
 <body class="conteudo exercicio">
     <input type="file" name="arquivo" />
-    <div class="progresso"></div>
+    <div class="progresso" id="progresso"></div>
 
     <script>
-        // ...
+        function ajaxUpload(config) {
+            const xhr = new XMLHttpRequest()
+
+            if (xhr.upload) {
+                xhr.upload.onprogress = e => {
+                    const atual = e.loaded
+                    const total = e.total
+                    const percentual = Math.floor(atual / total * 100)
+                    config.progresso({
+                        atual,
+                        total,
+                        percentual
+                    })
+                }
+            }
+
+            xhr.open('post', config.url, true)
+            xhr.send(config.formData)
+        }
+
+        document.querySelector('input[type=file]').onchange = e => {
+            const formData = new FormData()
+            const inputFile = e.target
+            formData.append(inputFile.name, inputFile.files[0])
+
+            ajaxUpload({
+                url: 'upload',
+                formData: formData,
+                progresso(dados) {
+                    const progresso = document.getElementById('progresso')
+                    progresso.style.width = (80 * dados.percentual) / 100 + 'vw'
+                    progresso.innerHTML = dados.percentual + '%'
+                }
+            })
+        }
     </script>
 </body>
