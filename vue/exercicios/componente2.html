@@ -10,10 +10,31 @@
 
 <body class="exercicio">
     <div id="app">
+        <contador></contador>
+        <contador></contador>
     </div>
     <script>
+        Vue.component('contador', {
+            props: ['id'],
+            data: function () {
+                return {
+                    cont: 0
+                }
+            },
+            methods: {
+                add() {
+                    this.cont++
+                }
+            },
+            template: `
+                <button id='{{cont}}' @click='add'>{{cont}}</button>
+            `
+        })
         new Vue({
-            el: '#app'
+            el: '#app',
+            data: {
+                cont: 0
+            }
         })
     </script>
 </body>
